@@ -35,10 +35,13 @@ s_factor2 = Slider(ax_slide2, 'Res. [kpc pix$^{-1}$]', 30/120, 30/15, valinit=30
 ax_slide3 = plt.axes([0.25, 0.15, 0.55, 0.03])
 s_factor3 = Slider(ax_slide3, 'L$_\mathrm{disc,I}$/L$_\mathrm{disc,B}$', 1, 100, valinit=3, valstep=1)
 
-ax_slide4 = plt.axes([0.25, 0.2, 0.55, 0.03])
+ax_slide6 = plt.axes([0.25, 0.2, 0.55, 0.03])
+s_factor6 = Slider(ax_slide6, 'L$_\mathrm{arm,I}$/L$_\mathrm{arm,B}$', 0.05, 5, valinit=0.75, valstep=0.05)
+
+ax_slide4 = plt.axes([0.25, 0.25, 0.55, 0.03])
 s_factor4 = Slider(ax_slide4, 'L$_\mathrm{bulge,I}$/L$_\mathrm{bulge,B}$', 1, 100, valinit=6, valstep=1)
 
-ax_slide5 = plt.axes([0.25, 0.25, 0.55, 0.03])
+ax_slide5 = plt.axes([0.25, 0.3, 0.55, 0.03])
 s_factor5 = Slider(ax_slide5, 'R$_\mathrm{helio}$ [kpc]', 3, 20, valinit=10, valstep=1)
 
 
@@ -59,19 +62,20 @@ Res = int(30/(s_factor2.val) - 1)
 R = 30/(Res+1)
 
 # Factor by which to reduce the pixel values of the components
-armdisc_redux = s_factor3.val
+disc_redux = s_factor3.val
 bulgebar_redux = s_factor4.val
+arm_redux = s_factor6.val
 
 # Loading the component images with the chosen resolution and flux scaling 
 # These were created with the Urquhart et al. 2014 masers and the method of Reid et al. 2019
 # For details of this and the other components, see Chrimes et al. (2021)
-arms = np.loadtxt('Fullmap/Arms_'+str(Res)+'.txt')/(armdisc_redux)
-disc_in = np.loadtxt('Fullmap/Disc_'+str(Res)+'.txt')/(armdisc_redux)
+arms = np.loadtxt('Fullmap/Arms_'+str(Res)+'.txt')/(arm_redux)
+disc_in = np.loadtxt('Fullmap/Disc_'+str(Res)+'.txt')/(disc_redux)
 disc = scipy.ndimage.gaussian_filter(disc_in,sigma=5)
 barbulge = np.loadtxt('Fullmap/Barbulge_'+str(Res)+'.txt')/(bulgebar_redux)
 
 # The image
-Resgrid = arms + disc + barbulge
+Resgrid = scipy.ndimage.gaussian_filter(arms + disc + barbulge,sigma=0.75,truncate=2)
 
 # Creating the image
 ax2 = fig.add_subplot(122)
@@ -178,37 +182,34 @@ ax1.set(xlim=(0,1), ylim=(0,1))
 
 
 
+
 # Same as above, but with update-able parameters based on user defined slider values
 def update(val):
     ax1.clear()
     ax2.clear()
     
-    maxdistlim = s_factor5.val #kpc
+    maxdistlim = s_factor5.val #kpc, heliocentric selection
     distances = MWmagnetars.Dist.values
-    names = MWmagnetars.Name.values[(distances > 0) & (distances < maxdistlim)]
     xmag = np.loadtxt('mcgill_x.txt')[(distances > 0) & (distances < maxdistlim)]
     ymag = np.loadtxt('mcgill_y.txt')[(distances > 0) & (distances < maxdistlim)]   
-    hmag = np.loadtxt('mcgill_h.txt')[(distances > 0) & (distances < maxdistlim)]   
-    derrup = MWmagnetars.Dist_EUp.values[(distances > 0) & (distances < maxdistlim)]
-    derrlo = MWmagnetars.Dist_EDn.values[(distances > 0) & (distances < maxdistlim)]
-    dmag = distances[(distances > 0) & (distances < maxdistlim)]
 
-    circlecut = s_factor.val/30
+    circlecut = s_factor.val/30  #G-centric pixel selection
     Resin = 30/(s_factor2.val) - 1
     Reslist = np.array([14,29,59,89,119])
     Diff = np.ndarray.tolist(np.abs(Resin-Reslist))
     mindex = Diff.index(np.min(Diff))
     Res = int(Reslist[mindex])
 
-    armdisc_redux = s_factor3.val
+    disc_redux = s_factor3.val
     bulgebar_redux = s_factor4.val
+    arm_redux = s_factor6.val
     
-    arms = np.loadtxt('Fullmap/Arms_'+str(Res)+'.txt')/(armdisc_redux)
-    disc_in = np.loadtxt('Fullmap/Disc_'+str(Res)+'.txt')/(armdisc_redux)
+    arms = np.loadtxt('Fullmap/Arms_'+str(Res)+'.txt')/(arm_redux)
+    disc_in = np.loadtxt('Fullmap/Disc_'+str(Res)+'.txt')/(disc_redux)
     disc = scipy.ndimage.gaussian_filter(disc_in,sigma=5)
     barbulge = np.loadtxt('Fullmap/Barbulge_'+str(Res)+'.txt')/(bulgebar_redux)
     
-    Resgrid = arms + disc + barbulge
+    Resgrid = scipy.ndimage.gaussian_filter(arms + disc + barbulge,sigma=0.75,truncate=2)
     
     R = 30/(Res+1)
 
@@ -316,3 +317,4 @@ s_factor2.on_changed(update)
 s_factor3.on_changed(update)
 s_factor4.on_changed(update)
 s_factor5.on_changed(update)
+s_factor6.on_changed(update)
