@@ -10,7 +10,7 @@ as described in Chrimes et al. (2021). In each .txt, the columns are:
 5 - Enclosed flux (I-band)
 
 #############################################################################################################################################################
-Everything else in this repo is/is for some code adapted from the neutron star - Milky Way fraction of light code used for Chrimes et al. (2021).
+Everything else in this repo is adapted from the Milky Way fraction of light code used in Chrimes et al. (2021).
 
 !!! This is WIP and is still being updated as of April 2021 !!!
 
@@ -25,8 +25,7 @@ With this notebook/script, you can vary:
 (iii) The ratio of the arm luminosity in the I band, to the B band (default is 0.75, this is our best guess)
 (iv) The ratio of the disc luminosity in the I band, to the B band (default is 3, this is our best guess)
       
-Note that any (ii), (iii) and (iv) values which preserve these ratios produces a B-band image. This is just due to how we have scaled the original 
-luminosities in each band (e.g. in the I-band, the bulge contributes 25% of the flux), see Chrimes et al. (2021) for details.
+Note that any (ii), (iii) and (iv) values which preserve these ratios produces a B-band image. This is just due to how we have scaled the original  luminosities in each band (e.g. in the I-band, the bulge contributes 25% of the flux), see Chrimes et al. (2021) for details.
 
 You can also vary:
 (v) the pixel selection radius for F_light. Varying this simulates (albeit crudely) varying the background level of an image / the surface brightness of the galaxy.
