@@ -6,8 +6,8 @@ as described in Chrimes et al. (2021). In each .txt, the columns are:
 1 - Host-normalised offset (B-band)
 2 - Host-normalised offset (I-band)
 3 - F_light (B-band)
-4 - F_light (I-band)
-5 - Enclosed flux (I-band)
+5 - Enclosed flux (B-band)
+6 - Enclosed flux (I-band)
 
 #############################################################################################################################################################
 Everything else in this repo is adapted from the Milky Way fraction of light code used in Chrimes et al. (2021).
