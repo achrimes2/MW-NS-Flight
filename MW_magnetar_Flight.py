@@ -33,16 +33,16 @@ ax_slide2 = plt.axes([0.25, 0.05, 0.55, 0.03])
 s_factor2 = Slider(ax_slide2, 'Res. [kpc pix$^{-1}$]', 30/120, 30/15, valinit=30/120, valstep=0.05)
 
 ax_slide3 = plt.axes([0.25, 0.15, 0.55, 0.03])
-s_factor3 = Slider(ax_slide3, 'L$_\mathrm{disc,I}$/L$_\mathrm{disc,B}$', 1, 100, valinit=3, valstep=1)
+s_factor3 = Slider(ax_slide3, 'L$_\mathrm{disc,I}$/L$_\mathrm{disc,B}$', 1.0, 25, valinit=2.7, valstep=0.1)
 
 ax_slide6 = plt.axes([0.25, 0.2, 0.55, 0.03])
-s_factor6 = Slider(ax_slide6, 'L$_\mathrm{arm,I}$/L$_\mathrm{arm,B}$', 0.05, 5, valinit=0.75, valstep=0.05)
+s_factor6 = Slider(ax_slide6, 'L$_\mathrm{arm,I}$/L$_\mathrm{arm,B}$', 1, 25, valinit=2.7*0.75, valstep=0.1)
 
 ax_slide4 = plt.axes([0.25, 0.25, 0.55, 0.03])
-s_factor4 = Slider(ax_slide4, 'L$_\mathrm{bulge,I}$/L$_\mathrm{bulge,B}$', 1, 100, valinit=6, valstep=1)
+s_factor4 = Slider(ax_slide4, 'L$_\mathrm{bulge,I}$/L$_\mathrm{bulge,B}$', 1.0, 25, valinit=5.6, valstep=0.1)
 
 ax_slide5 = plt.axes([0.25, 0.3, 0.55, 0.03])
-s_factor5 = Slider(ax_slide5, 'R$_\mathrm{helio}$ [kpc]', 3, 20, valinit=10, valstep=1)
+s_factor5 = Slider(ax_slide5, 'R$_\mathrm{helio}$ [kpc]', 3.0, 20, valinit=10.0, valstep=1.0)
 
 
 
@@ -171,7 +171,7 @@ magnetar_flight = flight_masers[bestdex]
 magnetar_flight[offthehost] = 0
 
 # Plotting Flight
-N,bins,patches = ax1.hist(magnetar_flight,histtype='step',density=True,cumulative=True,bins=np.linspace(0,1,100),linewidth=4,color='k')
+N,bins,patches = ax1.hist(magnetar_flight,histtype='step',density=True,cumulative=True,bins=1000,linewidth=4,color='k')
 patches[0].set_xy(patches[0].get_xy()[:-1])
 p, = ax1.plot([0,1],[-1,-2],'-k',linewidth=4,label='Magnetars')
 ax1.set_xlabel('Fraction of Light',fontsize=12)
@@ -298,7 +298,7 @@ def update(val):
     magnetar_flight = flight_masers[bestdex]  
     magnetar_flight[offthehost] = 0
     
-    N,bins,patches = ax1.hist(magnetar_flight,histtype='step',density=True,cumulative=True,bins=np.linspace(0,1,100),linewidth=4,color='k')
+    N,bins,patches = ax1.hist(magnetar_flight,histtype='step',density=True,cumulative=True,bins=1000,linewidth=4,color='k')
     patches[0].set_xy(patches[0].get_xy()[:-1])
     ax1.plot([0,1],[-1,-2],'-k',linewidth=4,label='Magnetars')
     ax1.set_xlabel('Fraction of Light',fontsize=13)

@@ -16,7 +16,8 @@ Everything else in this repo is adapted from the Milky Way fraction of light cod
 !!! This is WIP and is still being updated as of April 2021 !!!
 
 Simply clone/download this repo and run either the ipython notebook or the .py script. These both produce an interactive figure showing the 
-fraction of light distribution for Milky Way magnetars, given the best estimate of their heliocentric distance. 
+fraction of light distribution for Milky Way magnetars, given the best estimate of their heliocentric distance. Note that unlike the version used in the paper,
+there is no y<8.3kpc cut, instead the user simply varies the heliocentric distance sample selection radius.
 
 #############################################################################################################################################################
 
