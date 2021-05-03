@@ -30,19 +30,19 @@ ax_slide = plt.axes([0.25, 0.1, 0.55, 0.03])
 s_factor = Slider(ax_slide, 'R$_\mathrm{selection}$ [kpc]', 0.3*30, 0.5*30, valinit=0.4*30, valstep=0.01*30)
 
 ax_slide2 = plt.axes([0.25, 0.05, 0.55, 0.03])
-s_factor2 = Slider(ax_slide2, 'Res. [kpc pix$^{-1}$]', 30/120, 30/15, valinit=30/120, valstep=0.05)
+s_factor2 = Slider(ax_slide2, 'Res. [kpc pix$^{-1}$]', 0.25, 1, valinit=30/120, valstep=0.05)
 
 ax_slide3 = plt.axes([0.25, 0.15, 0.55, 0.03])
-s_factor3 = Slider(ax_slide3, 'L$_\mathrm{disc,I}$/L$_\mathrm{disc,B}$', 1.0, 25, valinit=2.7, valstep=0.1)
+s_factor3 = Slider(ax_slide3, 'L$_\mathrm{disc}$ reduction', 1.0, 25, valinit=2.7, valstep=0.1)
 
 ax_slide6 = plt.axes([0.25, 0.2, 0.55, 0.03])
-s_factor6 = Slider(ax_slide6, 'L$_\mathrm{arm,I}$/L$_\mathrm{arm,B}$', 1, 25, valinit=2.7*0.75, valstep=0.1)
+s_factor6 = Slider(ax_slide6, 'L$_\mathrm{arm}$ reduction', 1, 25, valinit=2.7*0.75, valstep=0.1)
 
 ax_slide4 = plt.axes([0.25, 0.25, 0.55, 0.03])
-s_factor4 = Slider(ax_slide4, 'L$_\mathrm{bulge,I}$/L$_\mathrm{bulge,B}$', 1.0, 25, valinit=5.6, valstep=0.1)
+s_factor4 = Slider(ax_slide4, 'L$_\mathrm{bulge}$ reduction', 1.0, 25, valinit=5.6, valstep=0.1)
 
 ax_slide5 = plt.axes([0.25, 0.3, 0.55, 0.03])
-s_factor5 = Slider(ax_slide5, 'R$_\mathrm{helio}$ [kpc]', 3.0, 20, valinit=10.0, valstep=1.0)
+s_factor5 = Slider(ax_slide5, 'R$_\mathrm{helio}$ [kpc]', 3.0, 20, valinit=15.0, valstep=1.0)
 
 
 
@@ -195,7 +195,7 @@ def update(val):
 
     circlecut = s_factor.val/30  #G-centric pixel selection
     Resin = 30/(s_factor2.val) - 1
-    Reslist = np.array([14,29,59,89,119])
+    Reslist = np.array([29,34,40,44,48,59,74,80,89,104,119])
     Diff = np.ndarray.tolist(np.abs(Resin-Reslist))
     mindex = Diff.index(np.min(Diff))
     Res = int(Reslist[mindex])
