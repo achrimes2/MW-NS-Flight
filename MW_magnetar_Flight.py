@@ -21,7 +21,7 @@ distances = MWmagnetars.Dist.values
 ############### FRACTIONAL LIGHT #########################################################
 #-------------------------------------------------------------------------------------------------------------#
 fig = plt.figure()
-plt.subplots_adjust(bottom=0.45,top=0.9)
+plt.subplots_adjust(bottom=0.5,top=0.95)
 ax1 = fig.add_subplot(121)
 p = ax1.plot([-1,-2],[0,1])
 
@@ -44,17 +44,21 @@ s_factor4 = Slider(ax_slide4, 'L$_\mathrm{bulge}$ reduction', 1.0, 25, valinit=5
 ax_slide5 = plt.axes([0.25, 0.3, 0.55, 0.03])
 s_factor5 = Slider(ax_slide5, 'R$_\mathrm{helio}$ [kpc]', 3.0, 20, valinit=15.0, valstep=1.0)
 
+ax_slide7 = plt.axes([0.25, 0.35, 0.55, 0.03])
+s_factor7 = Slider(ax_slide7, 'y$_\mathrm{cut}$ [kpc]', 0.0, 25.0, valinit=8.3, valstep=0.1)
 
 
 # Creating the interactive figure with default slider values
 maxdistlim = s_factor5.val #kpc
-names = MWmagnetars.Name.values[(distances > 0) & (distances < maxdistlim)]
-xmag = np.loadtxt('mcgill_x.txt')[(distances > 0) & (distances < maxdistlim)]
-ymag = np.loadtxt('mcgill_y.txt')[(distances > 0) & (distances < maxdistlim)]   
-hmag = np.loadtxt('mcgill_h.txt')[(distances > 0) & (distances < maxdistlim)]   
-derrup = MWmagnetars.Dist_EUp.values[(distances > 0) & (distances < maxdistlim)]
-derrlo = MWmagnetars.Dist_EDn.values[(distances > 0) & (distances < maxdistlim)]
-dmag = distances[(distances > 0) & (distances < maxdistlim)]
+ylim = s_factor7.val
+ymag = np.loadtxt('mcgill_y.txt')
+names = MWmagnetars.Name.values[(distances > 0) & (distances < maxdistlim) & (ymag<ylim)]
+xmag = np.loadtxt('mcgill_x.txt')[(distances > 0) & (distances < maxdistlim) & (ymag<ylim)]
+hmag = np.loadtxt('mcgill_h.txt')[(distances > 0) & (distances < maxdistlim) & (ymag<ylim)]   
+derrup = MWmagnetars.Dist_EUp.values[(distances > 0) & (distances < maxdistlim) & (ymag<ylim)]
+derrlo = MWmagnetars.Dist_EDn.values[(distances > 0) & (distances < maxdistlim) & (ymag<ylim)]
+dmag = distances[(distances > 0) & (distances < maxdistlim) & (ymag<ylim)]
+ymag = np.loadtxt('mcgill_y.txt')[(distances > 0) & (distances < maxdistlim) & (ymag<ylim)]   
 
 # Radius within which to select pixels for Flight, and the image resolution
 circlecut = s_factor.val/30
@@ -190,8 +194,10 @@ def update(val):
     
     maxdistlim = s_factor5.val #kpc, heliocentric selection
     distances = MWmagnetars.Dist.values
-    xmag = np.loadtxt('mcgill_x.txt')[(distances > 0) & (distances < maxdistlim)]
-    ymag = np.loadtxt('mcgill_y.txt')[(distances > 0) & (distances < maxdistlim)]   
+    ylim = s_factor7.val
+    ymag = np.loadtxt('mcgill_y.txt') 
+    xmag = np.loadtxt('mcgill_x.txt')[(distances > 0) & (distances < maxdistlim) & (ymag<ylim)]
+    ymag = np.loadtxt('mcgill_y.txt')[(distances > 0) & (distances < maxdistlim) & (ymag<ylim)]   
 
     circlecut = s_factor.val/30  #G-centric pixel selection
     Resin = 30/(s_factor2.val) - 1
@@ -309,8 +315,9 @@ def update(val):
 
 print('Flight values are: ')
 print(magnetar_flight)
-    
 
+np.savetxt('flight.txt',magnetar_flight)
+print('Saved to flight.txt.')
 
 s_factor.on_changed(update)
 s_factor2.on_changed(update)
@@ -318,3 +325,4 @@ s_factor3.on_changed(update)
 s_factor4.on_changed(update)
 s_factor5.on_changed(update)
 s_factor6.on_changed(update)
+s_factor7.on_changed(update)
