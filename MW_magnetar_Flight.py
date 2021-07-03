@@ -20,7 +20,7 @@ distances = MWmagnetars.Dist.values
 #-------------------------------------------------------------------------------------------------------------#
 ############### FRACTIONAL LIGHT #########################################################
 #-------------------------------------------------------------------------------------------------------------#
-fig = plt.figure()
+fig = plt.figure(figsize = (12,4))
 plt.subplots_adjust(bottom=0.5,top=0.95)
 ax1 = fig.add_subplot(121)
 p = ax1.plot([-1,-2],[0,1])
@@ -35,22 +35,17 @@ s_factor2 = Slider(ax_slide2, 'Res. [kpc pix$^{-1}$]', 0.25, 1, valinit=30/120, 
 ax_slide3 = plt.axes([0.25, 0.15, 0.55, 0.03])
 s_factor3 = Slider(ax_slide3, 'L$_\mathrm{disc}$ reduction', 1.0, 25, valinit=2.7, valstep=0.1)
 
-ax_slide6 = plt.axes([0.25, 0.2, 0.55, 0.03])
-s_factor6 = Slider(ax_slide6, 'L$_\mathrm{arm}$ reduction', 1, 25, valinit=2.7*0.75, valstep=0.1)
+ax_slide5 = plt.axes([0.25, 0.2, 0.55, 0.03])
+s_factor5 = Slider(ax_slide5, 'L$_\mathrm{arm}$ reduction', 1, 25, valinit=2.7*0.75, valstep=0.1)
 
 ax_slide4 = plt.axes([0.25, 0.25, 0.55, 0.03])
 s_factor4 = Slider(ax_slide4, 'L$_\mathrm{bulge}$ reduction', 1.0, 25, valinit=5.6, valstep=0.1)
 
-ax_slide5 = plt.axes([0.25, 0.3, 0.55, 0.03])
-s_factor5 = Slider(ax_slide5, 'R$_\mathrm{helio}$ [kpc]', 3.0, 20, valinit=15.0, valstep=1.0)
-
-ax_slide7 = plt.axes([0.25, 0.35, 0.55, 0.03])
-s_factor7 = Slider(ax_slide7, 'y$_\mathrm{cut}$ [kpc]', 0.0, 25.0, valinit=8.3, valstep=0.1)
 
 
 # Creating the interactive figure with default slider values
-maxdistlim = s_factor5.val #kpc
-ylim = s_factor7.val
+maxdistlim = 15 #kpc
+ylim = 8.3 #s_factor7.val
 ymag = np.loadtxt('mcgill_y.txt')
 names = MWmagnetars.Name.values[(distances > 0) & (distances < maxdistlim) & (ymag<ylim)]
 xmag = np.loadtxt('mcgill_x.txt')[(distances > 0) & (distances < maxdistlim) & (ymag<ylim)]
@@ -68,7 +63,7 @@ R = 30/(Res+1)
 # Factor by which to reduce the pixel values of the components
 disc_redux = s_factor3.val
 bulgebar_redux = s_factor4.val
-arm_redux = s_factor6.val
+arm_redux = s_factor5.val
 
 # Loading the component images with the chosen resolution and flux scaling 
 # These were created with the Urquhart et al. 2014 masers and the method of Reid et al. 2019
@@ -89,18 +84,13 @@ ax2.set_yticks([])
 ax2.set_xticks([])
 
 theta = np.linspace(0, 2*np.pi, 100)
-rhelio = maxdistlim*((Res+1)/30)
-XC = rhelio*np.cos(theta) + (0/R + Res/2)
-YC = rhelio*np.sin(theta) + ((0-8.2)/R + Res/2)
-ax2.plot(XC,YC,color='cadetblue',linestyle='--')
-
 rselection = s_factor.val*((Res+1)/30)
 XS = rselection*np.cos(theta) + (0/R + Res/2)
 YS = rselection*np.sin(theta) + ((8.2-8.2)/R + Res/2)
-ax2.plot(XS,YS,color='chocolate',linestyle='--')
+ax2.plot(XS,YS,color='cadetblue',linestyle='--')
 
 ax2.set_xlim([0,Res+1])
-ax2.set_ylim([0,Res+1])
+ax2.set_ylim([0,(Res+1)/2])
 
 # Fraction of light calculation begins
 shiftedx = (xmag[1:21]/R + Res/2)
@@ -108,6 +98,8 @@ shiftedy = ((ymag[1:21]-8.2)/R + Res/2)
 ax2.scatter(shiftedx,shiftedy)
 ax2.plot((0/R + Res/2),((0-8.2)/R + Res/2),'ok',fillstyle='none',markersize=10)
 ax2.plot((0/R + Res/2),((0-8.2)/R + Res/2),'+k',markersize=10)
+
+ax2.invert_yaxis()
 
 # Geting all pixel values and sorting them into increasing order.
 zlist = []
@@ -117,7 +109,7 @@ II = 0
 mask = np.ones((Res+1,Res+1))    
 indexes = np.linspace(0,Res,Res+1).astype(int)
 for valx in indexes:
-    for valy in indexes:   
+    for valy in indexes[0:int((Res+1)/2)]:   
         zlist = zlist + [Resgrid[valy,valx]]   
         rval = np.sqrt((valx-(Res+1)/2)**2 + (valy-(Res+1)/2)**2)
         rlist = rlist + [rval] #radial distance from centre of image
@@ -146,7 +138,7 @@ xlist = []
 ylist = []
 c = 0
 for Xx in indexes:
-    for Yy in indexes:   
+    for Yy in indexes[0:int((Res+1)/2)]:   
         if c in indicies:  
             xlist.append(Xx)
             ylist.append(Yy)  
@@ -192,9 +184,7 @@ def update(val):
     ax1.clear()
     ax2.clear()
     
-    maxdistlim = s_factor5.val #kpc, heliocentric selection
     distances = MWmagnetars.Dist.values
-    ylim = s_factor7.val
     ymag = np.loadtxt('mcgill_y.txt') 
     xmag = np.loadtxt('mcgill_x.txt')[(distances > 0) & (distances < maxdistlim) & (ymag<ylim)]
     ymag = np.loadtxt('mcgill_y.txt')[(distances > 0) & (distances < maxdistlim) & (ymag<ylim)]   
@@ -208,7 +198,7 @@ def update(val):
 
     disc_redux = s_factor3.val
     bulgebar_redux = s_factor4.val
-    arm_redux = s_factor6.val
+    arm_redux = s_factor5.val
     
     arms = np.loadtxt('Fullmap/Arms_'+str(Res)+'.txt')/(arm_redux)
     disc_in = np.loadtxt('Fullmap/Disc_'+str(Res)+'.txt')/(disc_redux)
@@ -223,24 +213,21 @@ def update(val):
     ax2.invert_yaxis()
     ax2.set_yticks([])
     ax2.set_xticks([])
-
-    rhelio = maxdistlim*((Res+1)/30)
-    XC = rhelio*np.cos(theta) + (0/R + Res/2)
-    YC = rhelio*np.sin(theta) + ((0-8.2)/R + Res/2)
-    ax2.plot(XC,YC,color='cadetblue',linestyle='--')
     
     rselection = s_factor.val*((Res+1)/30)
     XS = rselection*np.cos(theta) + (0/R + Res/2)
     YS = rselection*np.sin(theta) + ((8.2-8.2)/R + Res/2)
-    ax2.plot(XS,YS,color='chocolate',linestyle='--')
+    ax2.plot(XS,YS,color='cadetblue',linestyle='--')
     ax2.set_xlim([0,Res+1])
-    ax2.set_ylim([0,Res+1])
+    ax2.set_ylim([0,(Res+1)/2])
     
     shiftedx = (xmag/R + Res/2)
     shiftedy = ((ymag-8.2)/R + Res/2)
     ax2.scatter(shiftedx,shiftedy)
     ax2.plot((0/R + Res/2),((0-8.2)/R + Res/2),'ok',fillstyle='none',markersize=10)
     ax2.plot((0/R + Res/2),((0-8.2)/R + Res/2),'+k',markersize=10)
+    
+    ax2.invert_yaxis()
     
     zlist = []
     rlist = []
@@ -249,7 +236,7 @@ def update(val):
     mask = np.ones((Res+1,Res+1))      
     indexes = np.linspace(0,Res,Res+1).astype(int)
     for valx in indexes:
-        for valy in indexes:  
+        for valy in indexes[0:int((Res+1)/2)]:  
             zlist = zlist + [Resgrid[valy,valx]]  
             #plt.plot(valx,valy,'.c')    #
             rval = np.sqrt((valx-(Res+1)/2)**2 + (valy-(Res+1)/2)**2)
@@ -278,7 +265,7 @@ def update(val):
     ylist = []
     c = 0
     for Xx in indexes:
-        for Yy in indexes:    
+        for Yy in indexes[0:int((Res+1)/2)]:    
             if c in indicies:  
                 xlist.append(Xx)
                 ylist.append(Yy)  
@@ -313,6 +300,12 @@ def update(val):
     ax1.legend(loc=4,frameon=False)
     ax1.set(xlim=(0,1), ylim=(0,1))
 
+    print('Flight values are: ')
+    print(magnetar_flight)
+    
+    np.savetxt('flight.txt',magnetar_flight)
+    print('Saved to flight.txt.')
+
 print('Flight values are: ')
 print(magnetar_flight)
 
@@ -324,5 +317,3 @@ s_factor2.on_changed(update)
 s_factor3.on_changed(update)
 s_factor4.on_changed(update)
 s_factor5.on_changed(update)
-s_factor6.on_changed(update)
-s_factor7.on_changed(update)
